@@ -1,0 +1,7 @@
+{
+    "require": {
+        "slim/slim": "^3.12",
+        "slim/twig-view": "^2.5",
+        "opb/slim-basic-auth": "^0.2.2"
+    }
+}

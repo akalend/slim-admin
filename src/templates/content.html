@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+    ******
+    {% for entry in entries %}
+        <h6>{{ entry.title }}</h6>
+        
+    {% endfor %}
+{% endblock %}
