@@ -1,6 +1,10 @@
 <?php 
 
+require '../config.php';
 require '../vendor/autoload.php';
+
+define('PAGESIZE', 25);
+
 
 spl_autoload_register(function ($class) {
      // echo  __DIR__. '/lib/' . $class . '.php'; exit;
@@ -10,11 +14,20 @@ spl_autoload_register(function ($class) {
 session_start();
 
 $config = ['settings' => [
-    'addContentLengthHeader' => false,
-    'displayErrorDetails' => true,    
-],
-    'notFoundHandler' => $handler,];
 
+    'addContentLengthHeader' => true,
+    'displayErrorDetails' => true,    
+    ],
+    // 'notFoundHandler' => $handler,
+    'db' => [
+        'user'      => MYSQL_USER,
+        'password'  => MYSQL_PASSWORD,
+        'dbname'    => MYSQL_DBNAME,// MYSQL_DBNAME
+        'host'      => '127.0.0.1',
+    ]
+];
+
+// $app->config('debug', true);
 
 $app = new \Slim\App($config);
 // Fetch DI Container
@@ -68,11 +81,30 @@ $app->get('/admin', function ($request, $response, $args) {
 
 });
 
+$app->get('/download', function ($request, $response) {
+    
+    header(
+        'Content-type: application/application/vnd.ms-excel; charset=utf-8');
+    header(
+       'Content-Disposition:  attachment;filename='.date("d-m-Y").'-export.xls');
+    header(
+       'Content-Transfer-Encoding: binary');
+    
+    $query = $_SERVER['QUERY_STRING'];
+
+    $this->view->render($response, 'test2.html', [
+        'xxx' => $query,
+    ]);
+
+    return $response;
+});
+
+
 
 $app->post('/login', function ($request, $response, $args) use ($app) {
     
     if (Helper::autorize($request->getParsedBody())) {
-        return $response->withHeader('Location', '/test');
+        return $response->withHeader('Location', '/orders/');
     };
 
     // return $response->write('Location false');
@@ -94,22 +126,70 @@ $app->get('/check', function ($request, $response, $args) {
 });
 
 
-$app->get('/test', function ($request, $response, $args) {
+$app->get('/orders/[{id}]', function ($request, $response, $args) use ($app) {
     
     if ( !Helper::checkLogin() ) 
         return $this->view->render($response, 'login.html'); 
+
+    $conf = $app->getContainer();
+    $db = new DbOrder( $conf->db);
+
+    $ret = Helper::showPage($request, $response, $args, $db, [
+       'route'  => $this,
+       'title'  => 'Orders',
+       'url'    => 'orders',
+       'details'=> 'order',   
+       'orderBy' => 'id',
+    ]);
+
+      // exit;
+    return $ret;
+})->setName('order');
+
+$app->get('/order/{id}', function ($request, $response, $args) use ($app) {
     
-    return $this->view->render($response, 'content.html', [
-      'entries'  => [ [ 'title'  => 'Garri Potter'],
-        [ 'title'  => 'Adventuries'],
-        [ 'title'  => 'Tri Tolstjaka'],
-        [ 'title'  => 'Buratino'],
-        [ 'title'  =>   Helper::checkLogin() ? 'true' : 'false'  ]
-      ]
-    ]  );
+    if ( !Helper::checkLogin() ) 
+        return $this->view->render($response, 'login.html'); 
+
+    $conf = $app->getContainer();
+    $db = new DbOrder( $conf->db);
+// echo '<pre>';
+    $order = $db->getById( $args['id'] );
+
+    return $this->view->render($response, 'order.html', $order); 
+
+})->setName('order');
+
+
+$app->get('/change-status/{status}/{id}', function($request, $response, $args) use ($app) {
+
+
+    $conf = $app->getContainer();
+    $db = new DbOrder( $conf->db);
+
+    $db->setStatus($args);
+ 
+    echo 'redirect to /order/' . $args['id'];
+
+    // return $response->withHeader('Location', '/order/' . $args['id'] );
 });
 
+$app->get('/log/[{id}]', function ($request, $response, $args) use ($app) {
+    
+    if ( !Helper::checkLogin() ) 
+        return $this->view->render($response, 'login.html'); 
 
+    $conf = $app->getContainer();
+    $db = new DbLog( $conf->db);
+
+    $ret = Helper::showPage($request, $response, $args, $db, [
+       'route'   => $this,
+       'title'   =>  'Лог запросов',
+       'url'     => 'log',
+       'details' => 'loginfo',
+       'orderBy' => 'ts',
+    ]  );
+})->setName('order');
 
 
 // Run app

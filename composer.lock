@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce1fe2cfac903fcd8c8a847770467fa1",
+    "content-hash": "7fab74861e0dc4352ac3f4974313e295",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -82,51 +82,6 @@
                 "routing"
             ],
             "time": "2018-02-13T20:26:39+00:00"
-        },
-        {
-            "name": "opb/slim-basic-auth",
-            "version": "0.2.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/opb/slim-basic-auth.git",
-                "reference": "cf5cd64140bbe2280af07210cdca908ee5a71c54"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/opb/slim-basic-auth/zipball/cf5cd64140bbe2280af07210cdca908ee5a71c54",
-                "reference": "cf5cd64140bbe2280af07210cdca908ee5a71c54",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "slim/slim": ">=2.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Slim\\Middleware\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Olly Butterfield",
-                    "email": "olly@opb.me.uk",
-                    "homepage": "http://www.opb.me.uk"
-                }
-            ],
-            "description": "HTTP Basic Auth Middleware for the Slim PHP Framework",
-            "homepage": "https://github.com/opb/slim-basic-auth",
-            "keywords": [
-                "auth",
-                "http auth",
-                "middleware",
-                "slim"
-            ],
-            "time": "2015-02-04T19:43:45+00:00"
         },
         {
             "name": "pimple/pimple",

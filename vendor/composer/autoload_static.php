@@ -22,7 +22,6 @@ class ComposerStaticInitf7df26128c5eccd3e83f0295aacfd425
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Slim\\Views\\' => 11,
-            'Slim\\Middleware\\' => 16,
             'Slim\\' => 5,
         ),
         'P' => 
@@ -56,10 +55,6 @@ class ComposerStaticInitf7df26128c5eccd3e83f0295aacfd425
         'Slim\\Views\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/twig-view/src',
-        ),
-        'Slim\\Middleware\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/opb/slim-basic-auth/src',
         ),
         'Slim\\' => 
         array (

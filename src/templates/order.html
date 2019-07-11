@@ -1,0 +1,193 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+order = {{id}}<br>
+order = {{order_id}}<br>
+
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Ordr № {{order_id}}</h4>
+                    <div class="lead">Status
+        {% if  status == 'Canceled'  %}
+        <label class="badge badge-danger">{{status}}</label> 
+        {% elseif  status == 'CC: cancel'  %} 
+        <label class="badge badge-danger">{{status}}</label>
+        {% elseif  status == 'CC: approved'  %} 
+        <label class="badge badge-success">{{status}}</label>
+        {% elseif  status == 'CC: recall'  %}
+        <label class="badge badge-info">{{status}}</label>
+        {% elseif  status == 'CC: not phoned'  %}
+        <label class="badge badge-info">{{status}}</label>
+        {% elseif  status == 'new'  %}
+        <label class="badge badge-warning">{{status}}</label>
+        {% else  %}
+        <label class="badge badge-warning">{{status}}</label>
+        {% endif %}
+
+
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuOutlineButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{status}}</button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuOutlineButton1" x-placement="top-start" style="position: absolute; transform: translate3d(0px, -185px, 0px); top: 0px; left: 0px; will-change: transform;">
+            <a class="dropdown-item text-danger"  href="/change-status/Canceled/{{id}}">Canceled</a>
+            <a class="dropdown-item text-danger"  href="/change-status/CC:+cancel/{{id}}">CC: cancel</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-info"    href="/change-status/CC:+not+phoned/{{id}}">CC: not phoned</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-success" href="/change-status/CC:+approved/{{id}}">CC: approved</a>
+            <a class="dropdown-item text-success" href="/change-status/delivered/{{id}}">delivered</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-success" href="/change-status/paid/{{id}}">paid</a>
+          </div>
+        </div>
+        <blockquote class="blockquote blockquote-primary">
+                      <b class="text-danger">ВНИМАНИЕ</b>
+                      <footer class="blockquote-footer">изменение статуса тут <b class="text-danger">не гарантирует</b>
+                        его изменение в Retail CRM
+                      </footer>
+        </blockquote>
+
+
+                  </div>
+                    <form class="form-sample">
+                      <p class="card-description"> Personal info </p>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Name</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" value="{{name}}">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Shop</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" value="{{shop}}" disabled>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Phone</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" value="{{phone}}">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Date of Birth</label>
+                            <div class="col-sm-9">
+                              <input class="form-control" placeholder="dd/mm/yyyy">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Category</label>
+                            <div class="col-sm-9">
+                              <select class="form-control">
+                                <option>Category1</option>
+                                <option>Category2</option>
+                                <option>Category3</option>
+                                <option>Category4</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Membership</label>
+                            <div class="col-sm-4">
+                              <div class="form-radio">
+                                <label class="form-check-label">
+                                  <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1" value="" checked=""> Free <i class="input-helper"></i></label>
+                              </div>
+                            </div>
+                            <div class="col-sm-5">
+                              <div class="form-radio">
+                                <label class="form-check-label">
+                                  <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2" value="option2"> Professional <i class="input-helper"></i></label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="card-description"> Address </p>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Address 1</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">State</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Address 2</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Postcode</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">City</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Country</label>
+                            <div class="col-sm-9">
+                              <select class="form-control">
+                                <option>America</option>
+                                <option>Italy</option>
+                                <option>Russia</option>
+                                <option>Britain</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+
+{% endblock %}

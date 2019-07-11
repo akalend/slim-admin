@@ -1,10 +1,238 @@
 {% extends "layout.html" %}
 
-
 {% block body %}
-    ******
+<h2 class="card-title">{{title}}</h2>  
+  <script language="javascript" >
+
+      const decodeURLParams = search => {
+        const hashes = search.slice(search.indexOf("?") + 1).split("&");
+        return hashes.reduce((params, hash) => {
+          const split = hash.indexOf("=");
+          const key = hash.slice(0, split);
+          const val = hash.slice(split + 1);
+          return Object.assign(params, { [key]: decodeURIComponent(val) });
+        }, {});
+      };
+
+
+      function downld() {
+        console.log(window.location.href);
+        window.open( '/download?' + window.location.search);
+      }
+
+      function setDataFilter(filterType){
+
+        let map = decodeURLParams(window.location.search);
+
+        console.log( filterType);
+        console.log(map);
+
+        let uri = '?filter=' + filterType;
+        if (map.shop) uri += '&shop=' + map.shop;
+        if (map.status) uri += '&status=' + map.status;
+      
+        location.href='/{{url}}/{{pager.current}}' + uri;        
+
+
+      }
+  </script>
+
+      <div class="col-md-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-3 col-md-6">
+                <div class="d-flex">
+                  <div class="wrapper">
+                    <h6 class="mb-0 font-weight-semibold"><a href="#" onclick="setDataFilter('day')">за день</a></h6>
+                      <h6 class="mb-0 font-weight-semibold"><a href="#" onclick="setDataFilter('yesterday')">за вчера</a></h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="d-flex">
+                  <div class="wrapper">
+                    <h6 class="mb-0 font-weight-semibold"><a href="#" onclick="setDataFilter('month')">за месяц</a></h6>
+                    <h6 class="mb-0 font-weight-semibold"><a href="#" onclick="setDataFilter('all')">за все время</a></h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="d-flex">
+                  <div class="wrapper">
+                    <h6 class="mb-0 font-weight-semibold">с<input type="text" class="form-control"/></h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-6">
+                <div class="d-flex">
+                  <div class="wrapper">
+                    
+                  
+                    <h6 class="mb-0 font-weight-semibold">по<input type="text" class="form-control"/></h6>
+                  </div>
+                </div>
+              </div>
+                            
+            </div>
+          </div>
+        </div>
+      </div>
+
+<span style="align:right" class="text-primary" ><a class="fa fa-download primary"  onclick="downld()"></a></span>
+
+  <div class="btn-group" role="group" aria-label="First group">
+      <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.pred}}{{shop}}'"><< </button>
+  {% for i in 0..pager.pages  %}
+      {% if pager.current == i  %}
+      <button type="button" class="btn btn-primary"  onclick="location.href='/{{url}}/{{ i }}{{shop}}'">{{ i +1 }}</button>
+     {% else %}
+     <button type="button" class="btn btn-light"  onclick="location.href='/{{url}}/{{ i }}{{shop}}'">{{ i +1 }}</button>
+     {% endif %}
+  {% endfor %}
+      <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.current}}{{shop}}'" > >> </button>
+  </div>
+<form action="/{{url}}/0" >
+<div class="form-group">
+    <div class="input-group">
+      <div class="input-group-prepend bg-primary">
+        <span class="input-group-text bg-transparent">
+          <i class="mdi mdi-shield-outline text-white"></i>
+        </span>
+      </div>
+      <input name="search" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="colored-addon1">
+    </div>
+</div>
+</form>
+
+<table class="table">
+    <thead>
+      <tr>
+
+        <th></th>
+        <th>Name</th>
+        <th>Order No.</th>
+        <th>Summ</th>
+        <th>Created</th>
+        <th>City</th>
+        <th>Post code</th>
+        <th>Phone</th>
+        <th>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Shop </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <a class="dropdown-item" href="0">All</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" onclick="setShopFilter(this)" >Leggins</a>
+              <a class="dropdown-item" onclick="setShopFilter(this)" >Razor</a>
+            </div>
+            </div>
+        </th>
+        <script language="javascript" >
+
+          function setShopFilter(arg) {
+
+            map = decodeURLParams(window.location.search);
+            
+            if (arg.text == 'All') {
+                arg.href= map.status ? '/{{url}}/{{pager.current}}?status=' + map.status : '/{{url}}/{{pager.current}}';
+                return;
+            }
+
+              if (arg.text == 'Leggins') {
+
+                arg.href= map.status ? '/{{url}}/{{pager.current}}?shop=1&status=' + map.status : '/{{url}}/{{pager.current}}?shop=1';
+                return;
+              }
+
+              if (arg.text == 'Razor') {
+                arg.href= map.status ? '/{{url}}/{{pager.current}}?shop=2&status=' + map.status : '/{{url}}/{{pager.current}}?shop=2'  ;
+              }
+            
+          }
+
+          function setStatusFilter(arg) {
+
+            map = decodeURLParams(window.location.search);
+
+            if (arg.text == 'All') {
+                arg.href = map.shop ? '/{{url}}/{{pager.current}}?shop=' + map.shop : '/{{url}}/{{pager.current}}';
+                return;
+            }
+
+            arg.href = map.shop ? '/{{url}}/{{pager.current}}?shop=' + map.shop + '&status=' + arg.text : 
+                '/{{url}}/{{pager.current}}/?status=' + arg.text;
+          }
+        </script>
+        <th>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Status </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <a class="dropdown-item" onclick="setStatusFilter(this)" >All</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" onclick="setStatusFilter(this)">delivered</a>
+              <a class="dropdown-item" onclick="setStatusFilter(this)">canceled</a>
+              <a class="dropdown-item" onclick="setStatusFilter(this)">CC: approved</a>
+              <a class="dropdown-item" onclick="setStatusFilter(this)">Lead: new</a>
+              <a class="dropdown-item" onclick="setStatusFilter(this)">Lead: full</a>
+              <a class="dropdown-item" onclick="setStatusFilter(this)">CC: not phoned</a>
+              <a class="dropdown-item" onclick="setStatusFilter(this)" >CC: recall</a>
+            </div>
+            </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
     {% for entry in entries %}
-        <h6>{{ entry.title }}</h6>
-        
-    {% endfor %}
+    <tr
+      {% if entry.is_double==1 %} class="table-danger" {% endif %}>
+       <td>
+          <a class="fa fa-trash-o" href="/order-del/{{entry.id}}"></a>
+        </td>
+      <td>{{ entry.name }}</td>
+       
+
+      <td><a href="/{{details}}/{{entry.id}}">{{entry.order_id}}</a></td>
+      <td>{{entry.sum}}</td>
+
+      <td>{{entry.ts|date('m.d H:i')}}</td>
+      <td>{{entry.city}}</td>
+      <td>{% if entry.postcode  %}{{entry.postcode}}{% endif %}</td>
+      <td>{{entry.phone}}</td>
+      <td>{{entry.shop}}</td>
+      <td>
+        {% if  entry.status == 'Canceled'  %}
+        <label class="badge badge-danger">{{entry.status}}</label> 
+        {% elseif  entry.status == 'CC: cancel'  %} 
+        <label class="badge badge-danger">{{entry.status}}</label>
+        {% elseif  entry.status == 'CC: approved'  %} 
+        <label class="badge badge-success">{{entry.status}}</label>
+        {% elseif  entry.status == 'CC: recall'  %}
+        <label class="badge badge-info">{{entry.status}}</label>
+        {% elseif  entry.status == 'CC: not phoned'  %}
+        <label class="badge badge-info">{{entry.status}}</label>
+        {% elseif  entry.status == 'new'  %}
+        <label class="badge badge-warning">{{entry.status}}</label>
+        {% else  %}
+        <label class="badge badge-warning">{{entry.status}}</label>
+        {% endif %}
+      
+      </td>
+    </tr>
+    {% endfor %}                    
+    </tbody>
+  </table>
+
+  <div class="btn-group" role="group" aria-label="First group">
+      <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.pred}}{{shop}}'"><< </button>
+  {% for i in 0..pager.pages  %}
+      {% if pager.current == i  %}
+      <button type="button" class="btn btn-primary"  onclick="location.href='/{{url}}/{{ i }}{{shop}}'">{{ i +1 }}</button>
+     {% else %}
+     <button type="button" class="btn btn-light"  onclick="location.href='/{{url}}/{{ i }}{{shop}}'">{{ i +1 }}</button>
+     {% endif %}
+  {% endfor %}
+      <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.current}}{{shop}}'" > >> </button>
+  </div>
+
 {% endblock %}
