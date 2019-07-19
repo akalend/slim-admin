@@ -34,6 +34,7 @@ abstract class DbModel {
 	public function setEncoding($encoding) {
 		$this->encoding = $encoding;
 	}
+
 	
 	/**
 	 * protected function, check argument for not null
@@ -101,7 +102,8 @@ abstract class DbModel {
 		$where = $where ? ' WHERE ' . $where : '';
 		$query = 'SELECT * FROM ' . static::$_table . $where .$order . $limit . $top;
 
-// echo $query; exit;
+
+ // echo $query; exit;
 
 		return $this->exec($query);
 	}
@@ -196,7 +198,7 @@ abstract class DbModel {
 			if (!$this->db) {
 				die('PDO object is not created');
 			}
-			
+			 
 			$time_start = microtime();
 			
 			$this->res =  $this->db->query($sql,  PDO::FETCH_ASSOC);

@@ -16,8 +16,8 @@
 
 
       function downld() {
-        console.log(window.location.href);
-        window.open( '/download?' + window.location.search);
+        console.log(window.location.search);
+        window.open( '/download' + window.location.search);
       }
 
       function setDataFilter(filterType){
@@ -32,9 +32,41 @@
         if (map.status) uri += '&status=' + map.status;
       
         location.href='/{{url}}/{{pager.current}}' + uri;        
-
-
       }
+
+      function setShopFilter(arg) {
+
+        map = decodeURLParams(window.location.search);
+        
+        if (arg.text == 'All') {
+            arg.href= map.status ? '/{{url}}/{{pager.current}}?status=' + map.status : '/{{url}}/{{pager.current}}';
+            return;
+        }
+
+          if (arg.text == 'Leggins') {
+
+            arg.href= map.status ? '/{{url}}/{{pager.current}}?shop=1&status=' + map.status : '/{{url}}/{{pager.current}}?shop=1';
+            return;
+          }
+
+          if (arg.text == 'Razor') {
+            arg.href= map.status ? '/{{url}}/{{pager.current}}?shop=2&status=' + map.status : '/{{url}}/{{pager.current}}?shop=2'  ;
+          }
+        
+      }
+
+      function setStatusFilter(arg) {
+
+        map = decodeURLParams(window.location.search);
+
+        if (arg.text == 'All') {
+            arg.href = map.shop ? '/{{url}}/{{pager.current}}?shop=' + map.shop : '/{{url}}/{{pager.current}}';
+            return;
+        }
+
+        arg.href = map.shop ? '/{{url}}/{{pager.current}}?shop=' + map.shop + '&status=' + arg.text : 
+            '/{{url}}/{{pager.current}}/?status=' + arg.text;
+      }      
   </script>
 
       <div class="col-md-12 grid-margin">
@@ -79,8 +111,11 @@
         </div>
       </div>
 
+{% if url=='orders' %}
 <span style="align:right" class="text-primary" ><a class="fa fa-download primary"  onclick="downld()"></a></span>
-
+{% endif %}
+{% if pager.pages > 1%}
+<div>{{query}}</div>
   <div class="btn-group" role="group" aria-label="First group">
       <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.pred}}{{shop}}'"><< </button>
   {% for i in 0..pager.pages  %}
@@ -92,6 +127,7 @@
   {% endfor %}
       <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.current}}{{shop}}'" > >> </button>
   </div>
+{% endif %}  
 <form action="/{{url}}/0" >
 <div class="form-group">
     <div class="input-group">
@@ -110,10 +146,12 @@
       <tr>
 
         <th></th>
+        <th></th>
         <th>Name</th>
         <th>Order No.</th>
         <th>Summ</th>
         <th>Created</th>
+        <th>Updated</th>
         <th>City</th>
         <th>Post code</th>
         <th>Phone</th>
@@ -128,42 +166,6 @@
             </div>
             </div>
         </th>
-        <script language="javascript" >
-
-          function setShopFilter(arg) {
-
-            map = decodeURLParams(window.location.search);
-            
-            if (arg.text == 'All') {
-                arg.href= map.status ? '/{{url}}/{{pager.current}}?status=' + map.status : '/{{url}}/{{pager.current}}';
-                return;
-            }
-
-              if (arg.text == 'Leggins') {
-
-                arg.href= map.status ? '/{{url}}/{{pager.current}}?shop=1&status=' + map.status : '/{{url}}/{{pager.current}}?shop=1';
-                return;
-              }
-
-              if (arg.text == 'Razor') {
-                arg.href= map.status ? '/{{url}}/{{pager.current}}?shop=2&status=' + map.status : '/{{url}}/{{pager.current}}?shop=2'  ;
-              }
-            
-          }
-
-          function setStatusFilter(arg) {
-
-            map = decodeURLParams(window.location.search);
-
-            if (arg.text == 'All') {
-                arg.href = map.shop ? '/{{url}}/{{pager.current}}?shop=' + map.shop : '/{{url}}/{{pager.current}}';
-                return;
-            }
-
-            arg.href = map.shop ? '/{{url}}/{{pager.current}}?shop=' + map.shop + '&status=' + arg.text : 
-                '/{{url}}/{{pager.current}}/?status=' + arg.text;
-          }
-        </script>
         <th>
           <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Status </button>
@@ -185,17 +187,29 @@
     <tbody>
     {% for entry in entries %}
     <tr
-      {% if entry.is_double==1 %} class="table-danger" {% endif %}>
+      {% if entry.is_test==1 %}
+            class="table-danger"
+        {% elseif entry.is_double==1 %}
+            class="table-warning"
+       {% endif %}>
        <td>
           <a class="fa fa-trash-o" href="/order-del/{{entry.id}}"></a>
         </td>
+        <td>
+          {% if entry.is_test  %}
+          <a class="fa fa-bug" href="/order-set/0/{{entry.id}}"></a>
+          {% else %}
+          <a class="fa  fa-minus-circle" href="/order-set/1/{{entry.id}}"></a>
+          {% endif %}
+        </td>        
       <td>{{ entry.name }}</td>
        
 
       <td><a href="/{{details}}/{{entry.id}}">{{entry.order_id}}</a></td>
       <td>{{entry.sum}}</td>
 
-      <td>{{entry.ts|date('m.d H:i')}}</td>
+      <td>{{entry.ts|date('d.m H:i')}}</td>
+      <td>{{entry.ts_update|date('d.m H:i')}}</td>
       <td>{{entry.city}}</td>
       <td>{% if entry.postcode  %}{{entry.postcode}}{% endif %}</td>
       <td>{{entry.phone}}</td>
@@ -222,7 +236,7 @@
     {% endfor %}                    
     </tbody>
   </table>
-
+{% if pager.pages > 1%}
   <div class="btn-group" role="group" aria-label="First group">
       <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.pred}}{{shop}}'"><< </button>
   {% for i in 0..pager.pages  %}
@@ -234,5 +248,5 @@
   {% endfor %}
       <button type="button" class="btn btn-light" onclick="location.href='/{{url}}/{{pager.current}}{{shop}}'" > >> </button>
   </div>
-
+{% endif %}
 {% endblock %}

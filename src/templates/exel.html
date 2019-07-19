@@ -1,0 +1,55 @@
+   <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+   <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+ <head>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="author" content="zabey" />
+ <title>Download from ...</title>
+ </head>
+ <body>
+   <table border="1">
+ <tr>
+	 <th>Name</th>
+	 <th>Order №</th>
+	 <th>Summ</th>
+	 <th>Created</th>
+	 <th>Updated</th>
+	 <th>City</th>
+	 <th>Post code</th>
+	 <th>Phone</th>
+	 <th>Shop</th>
+	 <th>Status</th>
+ </tr>
+
+  {% set sum = 0 %}  
+  {% for entry in entries %}
+  <tr>
+  	<td>{{ entry.name }}</td>
+  	<td>{{ entry.id }}</td>
+  	<td>{{ entry.sum }}</td>
+  	
+  	<td>{{entry.ts|date('m.d H:i')}}</td>
+  	<td>{{entry.ts_update|date('m.d H:i')}}</td>
+  	<td>{{ entry.city }}</td>
+  	<td>{% if entry.postcode  %}{{entry.postcode}}{% endif %}</td>
+  	<td>{{ entry.phone }}</td>
+  	<td>{{ entry.shop }}</td>
+  	<td>{{ entry.status }}</td>
+  </tr>  
+  {% set sum = sum + entry.sum %}    
+  {% endfor %}  
+	<tr>
+	 <th></th>
+	 <th>Summa</th>
+	 <th>{{sum}}</th>
+	 
+	 <th></th>
+	 <th></th>
+	 <th></th>
+	 <th></th>
+	 <th></th>
+	 <th></th>
+	 <th></th> 
+	</tr> 
+ </table>
+
+</body></html>

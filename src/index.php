@@ -81,22 +81,37 @@ $app->get('/admin', function ($request, $response, $args) {
 
 });
 
-$app->get('/download', function ($request, $response) {
-    
-    header(
-        'Content-type: application/application/vnd.ms-excel; charset=utf-8');
-    header(
-       'Content-Disposition:  attachment;filename='.date("d-m-Y").'-export.xls');
-    header(
-       'Content-Transfer-Encoding: binary');
-    
-    $query = $_SERVER['QUERY_STRING'];
 
-    $this->view->render($response, 'test2.html', [
-        'xxx' => $query,
-    ]);
+$app->get('/order-set/{bug}/{id}', function ($request, $response, $args) use($app) {
+    $conf = $app->getContainer();
+    $db = new DbOrder( $conf->db);
+// var_dump($db); exit;
+    
+    $db->setTest((int)$args['id'],(int) $args['bug']);
+    return  $response->withRedirect($this->router->pathFor('orders'));
+});
 
-    return $response;
+$app->get('/download', function ($request, $response, $args) use ($app) {
+    
+    $conf = $app->getContainer();
+    $db = new DbOrder( $conf->db);    
+
+// var_dump($_REQUEST); exit;
+
+    $ret = Helper::showPage($request, $response, $args, $db, [
+       'route'  => $this,
+       'title'  => 'Orders',
+       'url'    => 'orders',
+       'details'=> 'order',   
+       'orderBy' => 'id',
+    ],
+    true );
+    
+    header('Content-type: application/application/vnd.ms-excel; charset=utf-8');
+    header('Content-Disposition: attachment;filename='.date("d-m-Y-h-i").'-export.xls');
+    header('Content-Transfer-Encoding: binary');
+
+    return $ret;
 });
 
 
@@ -125,11 +140,35 @@ $app->get('/check', function ($request, $response, $args) {
         $response->write("Ok" );
 });
 
+$app->get('/chart/{id}', function ($request, $response, $args) use($app) {
+        
+    $conf = $app->getContainer();
+    $db = new DbOrder( $conf->db);
+
+
+    $stats1 = $db->stats( 1 );
+    $stats2 = $db->stats( 2 );
+    
+    $res = json_encode([$stats1,$stats2]);
+
+    $response = $response->withHeader('Content-type', 'application/json');
+
+  return $response->write($res); 
+});
+
+$app->get('/chart', function ($request, $response, $args) use($app) {
+        
+  return $this->view->render($response, 'chart.html', []); 
+});
+
+
+
+
 
 $app->get('/orders/[{id}]', function ($request, $response, $args) use ($app) {
     
-    if ( !Helper::checkLogin() ) 
-        return $this->view->render($response, 'login.html'); 
+    // if ( !Helper::checkLogin() ) 
+    //     return $this->view->render($response, 'login.html'); 
 
     $conf = $app->getContainer();
     $db = new DbOrder( $conf->db);
@@ -144,7 +183,7 @@ $app->get('/orders/[{id}]', function ($request, $response, $args) use ($app) {
 
       // exit;
     return $ret;
-})->setName('order');
+})->setName('orders');
 
 $app->get('/order/{id}', function ($request, $response, $args) use ($app) {
     
@@ -156,6 +195,7 @@ $app->get('/order/{id}', function ($request, $response, $args) use ($app) {
 // echo '<pre>';
     $order = $db->getById( $args['id'] );
 
+    // $response->withHeader('X-Data','ok');
     return $this->view->render($response, 'order.html', $order); 
 
 })->setName('order');
